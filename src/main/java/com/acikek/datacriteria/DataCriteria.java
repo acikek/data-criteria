@@ -1,6 +1,7 @@
 package com.acikek.datacriteria;
 
-import com.acikek.datacriteria.predicate.JsonPredicateContainer;
+import com.acikek.datacriteria.advancement.DataCriterion;
+import com.acikek.datacriteria.advancement.Parameter;
 import com.acikek.datacriteria.predicate.builtin.IntRangeContainer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -14,7 +15,7 @@ public class DataCriteria implements ModInitializer {
     @Override
     public void onInitialize() {
         var intRangeContainer = new IntRangeContainer();
-        List<JsonPredicateContainer.Pair<?, ?>> list = List.of(new JsonPredicateContainer.Pair<>("value", intRangeContainer));
+        List<Parameter<?, ?>> list = List.of(new Parameter<>("value", false, intRangeContainer));
         var criterion = new DataCriterion(new Identifier("datacriteria:int_range"), list);
         Criteria.register(criterion);
 

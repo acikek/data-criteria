@@ -14,6 +14,6 @@ public interface JsonPredicate<T> extends Predicate<T> {
         if (getType().isInstance(value)) {
             return test(getType().cast(value));
         }
-        return false;
+        throw new IllegalStateException("'" + value + "' is not of type " + getType());
     }
 }
