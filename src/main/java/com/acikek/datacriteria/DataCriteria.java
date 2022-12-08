@@ -1,31 +1,35 @@
 package com.acikek.datacriteria;
 
 import com.acikek.datacriteria.advancement.DataCriterion;
-import com.acikek.datacriteria.advancement.Parameter;
-import com.acikek.datacriteria.predicate.JsonPredicates;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DataCriteria implements ModInitializer {
 
     public static final String ID = "datacriteria";
 
+    public static final Logger LOGGER = LogManager.getLogger(ID);
+
     public static Identifier id(String path) {
         return new Identifier(ID, path);
     }
 
+    public static void trigger(Identifier id, ServerPlayerEntity player, Object... inputs) {
+        var criterion = Criteria.VALUES.get(id);
+        if (criterion instanceof DataCriterion dataCriterion) {
+            dataCriterion.trigger(player, inputs);
+        }
+    }
+
     @Override
     public void onInitialize() {
-        List<Parameter<?, ?>> list = List.of(new Parameter<>("value", false, JsonPredicates.INT_RANGE));
-        var criterion = new DataCriterion(new Identifier("datacriteria:int_range"), list);
-        Criteria.register(criterion);
-
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            criterion.trigger(handler.player, 12345);
+            trigger(id("int_range"), handler.player, 12345);
         });
     }
 }

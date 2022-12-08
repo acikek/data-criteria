@@ -1,6 +1,7 @@
 package com.acikek.datacriteria.advancement;
 
 import com.acikek.datacriteria.predicate.JsonPredicate;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.advancement.criterion.AbstractCriterion;
@@ -10,8 +11,10 @@ import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
@@ -22,6 +25,15 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
     public DataCriterion(Identifier id, List<Parameter<?, ?>> containers) {
         this.id = id;
         this.containers = containers;
+    }
+
+    public static DataCriterion fromJson(Identifier id, JsonObject obj) {
+        JsonArray parameters = JsonHelper.getArray(obj, "parameters");
+        List<Parameter<?, ?>> containers = new ArrayList<>();
+        for (JsonElement element : parameters) {
+            containers.add(Parameter.fromJson(element.getAsJsonObject()));
+        }
+        return new DataCriterion(id, containers);
     }
 
     @Override

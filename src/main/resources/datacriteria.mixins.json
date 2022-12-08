@@ -4,6 +4,7 @@
   "package": "com.acikek.datacriteria.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "DataPackContentsMixin"
   ],
   "client": [
   ],

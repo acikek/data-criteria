@@ -1,0 +1,13 @@
+{
+  "parameters": [
+    {
+      "name": "value",
+      "type": "datacriteria:int_range"
+    },
+    {
+      "name": "value2",
+      "type": "datacriteria:int_range",
+      "optional": true
+    }
+  ]
+}
