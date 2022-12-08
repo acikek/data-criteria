@@ -2,7 +2,7 @@ package com.acikek.datacriteria;
 
 import com.acikek.datacriteria.advancement.DataCriterion;
 import com.acikek.datacriteria.advancement.Parameter;
-import com.acikek.datacriteria.predicate.builtin.IntRangeContainer;
+import com.acikek.datacriteria.predicate.JsonPredicates;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancement.criterion.Criteria;
@@ -12,10 +12,15 @@ import java.util.List;
 
 public class DataCriteria implements ModInitializer {
 
+    public static final String ID = "datacriteria";
+
+    public static Identifier id(String path) {
+        return new Identifier(ID, path);
+    }
+
     @Override
     public void onInitialize() {
-        var intRangeContainer = new IntRangeContainer();
-        List<Parameter<?, ?>> list = List.of(new Parameter<>("value", false, intRangeContainer));
+        List<Parameter<?, ?>> list = List.of(new Parameter<>("value", false, JsonPredicates.INT_RANGE));
         var criterion = new DataCriterion(new Identifier("datacriteria:int_range"), list);
         Criteria.register(criterion);
 

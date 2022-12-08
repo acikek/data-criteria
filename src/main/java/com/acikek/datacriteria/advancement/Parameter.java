@@ -2,7 +2,9 @@ package com.acikek.datacriteria.advancement;
 
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
+import com.acikek.datacriteria.predicate.JsonPredicates;
 import com.google.gson.JsonObject;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
 public class Parameter<T, P extends JsonPredicate<T>> {
@@ -17,10 +19,11 @@ public class Parameter<T, P extends JsonPredicate<T>> {
         this.container = container;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T, P extends JsonPredicate<T>> Parameter<T, P> fromJson(JsonObject obj) {
         String name = JsonHelper.getString(obj, "name");
         boolean optional = JsonHelper.getBoolean(obj, "optional", false);
-        JsonPredicateContainer<T, P> container = null; // TODO registry
-        return new Parameter<>(name, optional, container);
+        JsonPredicateContainer<?, ?> container = JsonPredicates.REGISTRY.get(new Identifier(JsonHelper.getString(obj, "type")));
+        return new Parameter<>(name, optional, (JsonPredicateContainer<T, P>) container);
     }
 }
