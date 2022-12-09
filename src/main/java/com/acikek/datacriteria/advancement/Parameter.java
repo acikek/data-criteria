@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
-public class Parameter<T, P extends JsonPredicate<T>> {
+public class Parameter<T, P extends JsonPredicate<T, ?>> {
 
     public String name;
     public boolean optional;
@@ -20,7 +20,7 @@ public class Parameter<T, P extends JsonPredicate<T>> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, P extends JsonPredicate<T>> Parameter<T, P> fromJson(JsonObject obj) {
+    public static <T, P extends JsonPredicate<T, ?>> Parameter<T, P> fromJson(JsonObject obj) {
         String name = JsonHelper.getString(obj, "name");
         boolean optional = JsonHelper.getBoolean(obj, "optional", false);
         JsonPredicateContainer<?, ?> container = JsonPredicates.REGISTRY.get(new Identifier(JsonHelper.getString(obj, "type")));

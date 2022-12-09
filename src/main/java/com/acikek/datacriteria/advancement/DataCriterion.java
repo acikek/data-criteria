@@ -38,7 +38,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?>>> result = containers.stream()
+        List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> result = containers.stream()
                 .map(parameter -> {
                     if (!obj.has(parameter.name) && !parameter.optional) {
                         throw new IllegalStateException("missing predicate '" + parameter.name + "'");
@@ -61,9 +61,9 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
 
     public class Conditions extends AbstractCriterionConditions {
 
-        public List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?>>> values;
+        public List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values;
 
-        public Conditions(EntityPredicate.Extended entity, List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?>>> values) {
+        public Conditions(EntityPredicate.Extended entity, List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values) {
             super(id, entity);
             this.values = values;
         }
@@ -80,7 +80,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                     }
                     throw new IllegalStateException("no value given for parameter '" + parameter.name + "' in criterion '" + id + "'");
                 }
-                JsonPredicate<?> predicate = values.get(i).getRight();
+                JsonPredicate<?, ?> predicate = values.get(i).getRight();
                 if (predicate != null && !predicate.tryTest(inputs[i])) {
                     return false;
                 }
