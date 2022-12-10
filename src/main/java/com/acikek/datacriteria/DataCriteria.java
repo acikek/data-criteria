@@ -32,7 +32,7 @@ public class DataCriteria implements ModInitializer {
                         player.getStackInHand(hand) // item predicate parameter
                 );
             }
-            return ActionResult.PASS;
+            return ActionResult.CONSUME_PARTIAL;
         });
     }
 }

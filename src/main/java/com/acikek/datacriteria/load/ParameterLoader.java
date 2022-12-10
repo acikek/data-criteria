@@ -2,11 +2,11 @@ package com.acikek.datacriteria.load;
 
 import com.acikek.datacriteria.DataCriteria;
 import com.acikek.datacriteria.advancement.DataCriterion;
+import com.acikek.datacriteria.mixin.CriteriaAccess;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -33,7 +33,7 @@ public class ParameterLoader extends JsonDataLoader implements IdentifiableResou
     protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
         // Remove existing criteria from registry
         for (DataCriterion existing : loaded) {
-            Criteria.VALUES.values().remove(existing);
+            CriteriaAccess.getValues().values().remove(existing);
         }
         loaded.clear();
         // Load new criteria
@@ -43,7 +43,7 @@ public class ParameterLoader extends JsonDataLoader implements IdentifiableResou
             try {
                 DataCriterion criterion = DataCriterion.fromJson(file.getKey(), obj);
                 loaded.add(criterion);
-                Criteria.VALUES.put(file.getKey(), criterion);
+                CriteriaAccess.getValues().put(file.getKey(), criterion);
                 successful++;
             }
             catch (Exception e) {
