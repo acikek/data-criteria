@@ -1,0 +1,35 @@
+{
+  "parent": "datacriteria:ring_bell",
+  "display": {
+    "icon": {
+      "item": "minecraft:grass_block"
+    },
+    "title": {
+      "text": "Pave the Way"
+    },
+    "description": {
+      "text": "Use a shovel on some grass"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "test": {
+      "trigger": "datacriteria:use_block",
+      "conditions": {
+        "block": {
+          "blocks": [
+            "minecraft:grass_block"
+          ]
+        },
+        "item": {
+          "items": [
+            "minecraft:iron_shovel"
+          ]
+        }
+      }
+    }
+  }
+}

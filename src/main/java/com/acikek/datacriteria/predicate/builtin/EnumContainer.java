@@ -27,13 +27,11 @@ public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, 
         return new Predicate<>(enumValue, type);
     }
 
-    public static class Predicate<T extends Enum<T>> extends JsonPredicate.Single<T> {
+    public static class Predicate<T extends Enum<T>> extends JsonPredicate.Equality<T> {
 
         public Predicate(T value, Class<T> type) {
-            super(new Single.Builder<T>()
-                    .value(value)
+            super(value, new Single.Builder<T>()
                     .type(type)
-                    .tester(e -> e == value)
                     .serializer(e -> new JsonPrimitive(e.name().toLowerCase())));
         }
     }

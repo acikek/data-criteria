@@ -1,0 +1,13 @@
+{
+  "parameters": [
+    {
+      "name": "block",
+      "type": "datacriteria:block"
+    },
+    {
+      "name": "item",
+      "type": "datacriteria:item",
+      "optional": true
+    }
+  ]
+}

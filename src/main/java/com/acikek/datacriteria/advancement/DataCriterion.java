@@ -1,5 +1,6 @@
 package com.acikek.datacriteria.advancement;
 
+import com.acikek.datacriteria.DataCriteria;
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -55,8 +56,12 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
         return id;
     }
 
+    public void trigger(boolean debug, ServerPlayerEntity player, Object... inputs) {
+        trigger(player, conditions -> conditions.matches(debug, inputs));
+    }
+
     public void trigger(ServerPlayerEntity player, Object... inputs) {
-        trigger(player, conditions -> conditions.matches(inputs));
+        trigger(false, player, inputs);
     }
 
     public class Conditions extends AbstractCriterionConditions {
@@ -68,22 +73,38 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
             this.values = values;
         }
 
-        public boolean matches(Object[] inputs) {
+        public boolean matches(boolean debug, Object[] inputs) {
+            if (debug) {
+                DataCriteria.LOGGER.info("");
+                DataCriteria.LOGGER.info("-- STARTING NEW MATCH CALL --");
+            }
             if (inputs.length > values.size()) {
                 throw new IllegalStateException("too many arguments given when triggering criterion '" + id + "'; " + inputs.length + " provided, maximum is " + values.size());
             }
             for (int i = 0; i < values.size(); i++) {
                 Parameter<?, ?> parameter = values.get(i).getLeft();
+                if (debug) {
+                    DataCriteria.LOGGER.info("Parameter #{}: {}", i, parameter.id);
+                }
                 if (i >= inputs.length) {
                     if (parameter.optional) {
+                        if (debug) {
+                            DataCriteria.LOGGER.info("No input provided for optional parameter. Skipping...");
+                        }
                         continue;
                     }
                     throw new IllegalStateException("no value given for parameter '" + parameter.name + "' in criterion '" + id + "'");
                 }
                 JsonPredicate<?, ?> predicate = values.get(i).getRight();
-                if (predicate != null && !predicate.tryTest(inputs[i])) {
+                if (predicate != null && !predicate.tryTest(inputs[i], debug)) {
+                    if (debug) {
+                        DataCriteria.LOGGER.info("Check failed! Aborting match...");
+                    }
                     return false;
                 }
+            }
+            if (debug) {
+                DataCriteria.LOGGER.info("Match passed!");
             }
             return true;
         }

@@ -10,9 +10,6 @@
   "icon": "assets/datacriteria/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "com.acikek.datacriteria.client.DataCriteriaClient"
-    ],
     "main": [
       "com.acikek.datacriteria.DataCriteria"
     ]

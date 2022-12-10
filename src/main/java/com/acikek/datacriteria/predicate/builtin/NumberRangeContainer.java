@@ -1,4 +1,4 @@
-package com.acikek.datacriteria.predicate.builtin.math;
+package com.acikek.datacriteria.predicate.builtin;
 
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;

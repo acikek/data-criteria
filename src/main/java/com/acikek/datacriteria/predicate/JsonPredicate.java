@@ -1,5 +1,6 @@
 package com.acikek.datacriteria.predicate;
 
+import com.acikek.datacriteria.DataCriteria;
 import com.google.gson.JsonElement;
 
 import java.util.function.Function;
@@ -17,6 +18,15 @@ public class JsonPredicate<T, P> implements Predicate<T> {
 
         public Single(JsonPredicate.Builder<T, T> builder) {
             super(builder);
+        }
+    }
+
+    public static class Equality<T> extends JsonPredicate<T, T> {
+
+        public Equality(T value, JsonPredicate.Builder<T, T> builder) {
+            super(builder
+                    .value(value)
+                    .tester(v -> v.equals(value)));
         }
     }
 
@@ -77,8 +87,12 @@ public class JsonPredicate<T, P> implements Predicate<T> {
         return serializer.apply(value);
     }
 
-    public boolean tryTest(Object value) {
+    public boolean tryTest(Object value, boolean debug) {
         if (getType().isInstance(value)) {
+            if (debug) {
+                DataCriteria.LOGGER.info("- Input value: {}", value);
+                DataCriteria.LOGGER.info("- Parameter value: {} ({})", this.value, toJson());
+            }
             return test(getType().cast(value));
         }
         throw new IllegalStateException("'" + value + "' is not of type " + getType());
