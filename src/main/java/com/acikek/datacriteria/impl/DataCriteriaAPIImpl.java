@@ -31,11 +31,7 @@ public class DataCriteriaAPIImpl {
         return JsonPredicates.REGISTRY;
     }
 
-    public static <T extends Enum<T>> EnumContainer<T> getEnum(Class<T> type) {
+    public static <T extends Enum<T>> EnumContainer<T> createEnum(Class<T> type) {
         return new EnumContainer<>(type);
-    }
-
-    public static <T extends Enum<T>> void registerEnum(Identifier id, Class<T> type) {
-        Registry.register(getRegistry(), id, getEnum(type));
     }
 }

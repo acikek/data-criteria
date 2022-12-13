@@ -1,15 +1,16 @@
 package com.acikek.datacriteria.predicate;
 
 import com.acikek.datacriteria.DataCriteria;
-import com.acikek.datacriteria.predicate.builtin.NumberRangeContainer;
-import com.acikek.datacriteria.predicate.builtin.delegate.BlockContainer;
-import com.acikek.datacriteria.predicate.builtin.delegate.LocationContainer;
+import com.acikek.datacriteria.predicate.builtin.delegate.DelegateParameters;
 import com.acikek.datacriteria.predicate.builtin.delegate.StateContainer;
 import com.google.gson.JsonPrimitive;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.BlockPredicate;
+import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -21,8 +22,20 @@ public class JsonPredicates {
             (Registry<JsonPredicateContainer<?, ?>>) (Object)
             FabricRegistryBuilder.createSimple(JsonPredicateContainer.class, DataCriteria.id("container")).buildAndRegister();
 
-    public static final NumberRangeContainer<Integer, NumberRangeContainer.IntPredicate> INT = NumberRangeContainer.getInt();
-    public static final NumberRangeContainer<Double, NumberRangeContainer.FloatPredicate> FLOAT = NumberRangeContainer.getFloat();
+    public static final JsonPredicateContainer<Integer, JsonPredicate<Integer, NumberRange.IntRange>> INT = new JsonPredicateContainer<>(
+            element -> {
+                NumberRange.IntRange range = NumberRange.IntRange.fromJson(element);
+                return new JsonPredicate<>(range, Integer.class, range::test, NumberRange::toJson);
+            }
+    );
+
+    public static final JsonPredicateContainer<Double, JsonPredicate<Double, NumberRange.FloatRange>> FLOAT = new JsonPredicateContainer<>(
+            element -> {
+                NumberRange.FloatRange range = NumberRange.FloatRange.fromJson(element);
+                return new JsonPredicate<>(range, Double.class, range::test, NumberRange::toJson);
+            }
+    );
+
     public static final JsonPredicateContainer<Boolean, JsonPredicate.Equality<Boolean>> BOOLEAN = JsonPredicateContainer.createPrimitive(
             Boolean.class, JsonPrimitive::new, JsonPrimitive::getAsBoolean
     );
@@ -48,10 +61,22 @@ public class JsonPredicates {
             }
     );
 
-    public static final BlockContainer BLOCK = new BlockContainer();
     public static final StateContainer<BlockState> BLOCK_STATE = StateContainer.getBlock();
     public static final StateContainer<FluidState> FLUID_STATE = StateContainer.getFluid();
-    public static final LocationContainer LOCATION = new LocationContainer();
+
+    public static final JsonPredicateContainer<DelegateParameters.Block, JsonPredicate<DelegateParameters.Block, BlockPredicate>> BLOCK = new JsonPredicateContainer<>(
+            element -> {
+                BlockPredicate predicate = BlockPredicate.fromJson(element);
+                return new JsonPredicate<>(predicate, DelegateParameters.Block.class, parameter -> predicate.test(parameter.world(), parameter.pos()), BlockPredicate::toJson);
+            }
+    );
+
+    public static final JsonPredicateContainer<DelegateParameters.Location, JsonPredicate<DelegateParameters.Location, LocationPredicate>> LOCATION = new JsonPredicateContainer<>(
+            element -> {
+                LocationPredicate predicate = LocationPredicate.fromJson(element);
+                return new JsonPredicate<>(predicate, DelegateParameters.Location.class, parameter -> predicate.test(parameter.world(), parameter.x(), parameter.y(), parameter.z()), LocationPredicate::toJson);
+            }
+    );
 
     public static void register(String name, JsonPredicateContainer<?, ?> container) {
         Registry.register(REGISTRY, DataCriteria.id(name), container);

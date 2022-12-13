@@ -50,6 +50,9 @@ public class ParameterLoader extends JsonDataLoader implements IdentifiableResou
                 DataCriteria.LOGGER.error("Error in criterion '" + file.getKey() + "': ", e);
             }
         }
-        DataCriteria.LOGGER.info("Loaded " + successful + " data criteria");
+        // Log
+        if (successful > 0) {
+            DataCriteria.LOGGER.info("Loaded " + successful + " data criteri" + (successful != 1 ? "a" : "on"));
+        }
     }
 }
