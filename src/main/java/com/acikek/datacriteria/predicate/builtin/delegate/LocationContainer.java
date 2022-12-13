@@ -6,23 +6,17 @@ import com.google.gson.JsonElement;
 import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.server.world.ServerWorld;
 
-public class LocationContainer extends JsonPredicateContainer<LocationContainer.Parameter, LocationContainer.Predicate> {
+public class LocationContainer extends JsonPredicateContainer<LocationContainer.Parameter, JsonPredicate<LocationContainer.Parameter, LocationPredicate>> {
 
     public record Parameter(ServerWorld world, double x, double y, double z) {}
 
     @Override
-    public Predicate fromJson(JsonElement element) {
-        return new Predicate(LocationPredicate.fromJson(element));
-    }
-
-    public static class Predicate extends JsonPredicate<Parameter, LocationPredicate> {
-
-        public Predicate(LocationPredicate predicate) {
-            super(new Builder<Parameter, LocationPredicate>()
-                    .value(predicate)
-                    .type(Parameter.class)
-                    .tester(parameter -> predicate.test(parameter.world, parameter.x, parameter.y, parameter.z))
-                    .serializer(LocationPredicate::toJson));
-        }
+    public JsonPredicate<Parameter, LocationPredicate> fromJson(JsonElement element) {
+        LocationPredicate predicate = LocationPredicate.fromJson(element);
+        return new JsonPredicate<>(
+                predicate, Parameter.class,
+                parameter -> predicate.test(parameter.world, parameter.x, parameter.y, parameter.z),
+                LocationPredicate::toJson
+        );
     }
 }

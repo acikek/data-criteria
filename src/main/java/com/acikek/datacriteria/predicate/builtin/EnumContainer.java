@@ -1,12 +1,13 @@
 package com.acikek.datacriteria.predicate.builtin;
 
+import com.acikek.datacriteria.predicate.Builder;
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.EnumUtils;
 
-public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, EnumContainer.Predicate<T>> {
+public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, JsonPredicate.Equality<T>> {
 
     public Class<T> type;
 
@@ -15,7 +16,7 @@ public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, 
     }
 
     @Override
-    public Predicate<T> fromJson(JsonElement element) {
+    public JsonPredicate.Equality<T> fromJson(JsonElement element) {
         if (!element.getAsJsonPrimitive().isString()) {
             throw new IllegalStateException("enum predicate must be a string");
         }
@@ -24,15 +25,8 @@ public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, 
         if (enumValue == null) {
             throw new IllegalStateException("'" + value + "' does not match to " + type);
         }
-        return new Predicate<>(enumValue, type);
-    }
-
-    public static class Predicate<T extends Enum<T>> extends JsonPredicate.Equality<T> {
-
-        public Predicate(T value, Class<T> type) {
-            super(value, new Single.Builder<T>()
-                    .type(type)
-                    .serializer(e -> new JsonPrimitive(e.name().toLowerCase())));
-        }
+        return new JsonPredicate.Equality<>(enumValue, new Builder.Single<T>()
+                .type(type)
+                .serializer(e -> new JsonPrimitive(e.name().toLowerCase())));
     }
 }

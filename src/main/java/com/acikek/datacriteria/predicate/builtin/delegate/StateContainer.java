@@ -1,5 +1,6 @@
 package com.acikek.datacriteria.predicate.builtin.delegate;
 
+import com.acikek.datacriteria.predicate.Builder;
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.google.gson.JsonElement;

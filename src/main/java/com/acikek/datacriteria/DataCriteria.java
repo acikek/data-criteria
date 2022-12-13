@@ -27,12 +27,12 @@ public class DataCriteria implements ModInitializer {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 DataCriteriaAPI.trigger(
                         new Identifier("datacriteria:use_block"), // ID of criterion
-                        serverPlayer,
+                        true, serverPlayer,
                         Parameters.block((ServerWorld) serverPlayer.world, hitResult.getBlockPos()), // block predicate parameter
                         player.getStackInHand(hand) // item predicate parameter
                 );
             }
-            return ActionResult.CONSUME_PARTIAL;
+            return ActionResult.PASS;
         });
     }
 }

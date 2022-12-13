@@ -7,23 +7,17 @@ import net.minecraft.predicate.BlockPredicate;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-public class BlockContainer extends JsonPredicateContainer<BlockContainer.Parameter, BlockContainer.Predicate> {
+public class BlockContainer extends JsonPredicateContainer<BlockContainer.Parameter, JsonPredicate<BlockContainer.Parameter, BlockPredicate>> {
 
     public record Parameter(ServerWorld world, BlockPos pos) {}
 
     @Override
-    public Predicate fromJson(JsonElement element) {
-        return new Predicate(BlockPredicate.fromJson(element));
-    }
-
-    public static class Predicate extends JsonPredicate<Parameter, BlockPredicate> {
-
-        public Predicate(BlockPredicate predicate) {
-            super(new Builder<Parameter, BlockPredicate>()
-                    .value(predicate)
-                    .type(Parameter.class)
-                    .tester(parameter -> predicate.test(parameter.world, parameter.pos))
-                    .serializer(BlockPredicate::toJson));
-        }
+    public JsonPredicate<BlockContainer.Parameter, BlockPredicate> fromJson(JsonElement element) {
+        BlockPredicate predicate = BlockPredicate.fromJson(element);
+        return new JsonPredicate<>(
+                predicate, Parameter.class,
+                parameter -> predicate.test(parameter.world, parameter.pos),
+                BlockPredicate::toJson
+        );
     }
 }

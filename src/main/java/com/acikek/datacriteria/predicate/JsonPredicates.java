@@ -1,16 +1,17 @@
 package com.acikek.datacriteria.predicate;
 
 import com.acikek.datacriteria.DataCriteria;
-import com.acikek.datacriteria.predicate.builtin.IdentifierContainer;
 import com.acikek.datacriteria.predicate.builtin.NumberRangeContainer;
-import com.acikek.datacriteria.predicate.builtin.PrimitiveContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.BlockContainer;
-import com.acikek.datacriteria.predicate.builtin.delegate.ItemContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.LocationContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.StateContainer;
+import com.google.gson.JsonPrimitive;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("unchecked")
@@ -22,11 +23,31 @@ public class JsonPredicates {
 
     public static final NumberRangeContainer<Integer, NumberRangeContainer.IntPredicate> INT = NumberRangeContainer.getInt();
     public static final NumberRangeContainer<Double, NumberRangeContainer.FloatPredicate> FLOAT = NumberRangeContainer.getFloat();
-    public static final PrimitiveContainer<Boolean> BOOLEAN = new PrimitiveContainer<>(PrimitiveContainer.Type.BOOLEAN);
-    public static final PrimitiveContainer<Character> CHARACTER = new PrimitiveContainer<>(PrimitiveContainer.Type.CHARACTER);
-    public static final PrimitiveContainer<String> STRING = new PrimitiveContainer<>(PrimitiveContainer.Type.STRING);
-    public static final IdentifierContainer IDENTIFIER = new IdentifierContainer();
-    public static final ItemContainer ITEM = new ItemContainer();
+    public static final JsonPredicateContainer<Boolean, JsonPredicate.Equality<Boolean>> BOOLEAN = JsonPredicateContainer.createPrimitive(
+            Boolean.class, JsonPrimitive::new, JsonPrimitive::getAsBoolean
+    );
+
+    public static final JsonPredicateContainer<Character, JsonPredicate.Equality<Character>> CHARACTER = JsonPredicateContainer.createPrimitive(
+            Character.class, JsonPrimitive::new, JsonPrimitive::getAsCharacter
+    );
+
+    public static final JsonPredicateContainer<String, JsonPredicate.Equality<String>> STRING = JsonPredicateContainer.createPrimitive(
+            String.class, JsonPrimitive::new, JsonPrimitive::getAsString
+    );
+
+    public static final JsonPredicateContainer<Identifier, JsonPredicate.Equality<Identifier>> IDENTIFIER = JsonPredicateContainer.createEquality(
+            Identifier.class,
+            identifier -> new JsonPrimitive(identifier.toString()),
+            element -> new Identifier(element.getAsString())
+    );
+
+    public static final JsonPredicateContainer<ItemStack, JsonPredicate<ItemStack, ItemPredicate>> ITEM = new JsonPredicateContainer<>(
+            element -> {
+                ItemPredicate predicate = ItemPredicate.fromJson(element);
+                return new JsonPredicate<>(predicate, ItemStack.class, predicate::test, ItemPredicate::toJson);
+            }
+    );
+
     public static final BlockContainer BLOCK = new BlockContainer();
     public static final StateContainer<BlockState> BLOCK_STATE = StateContainer.getBlock();
     public static final StateContainer<FluidState> FLUID_STATE = StateContainer.getFluid();
