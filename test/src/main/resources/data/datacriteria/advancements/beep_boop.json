@@ -1,0 +1,44 @@
+{
+  "parent": "datacriteria:ring_bell",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond"
+    },
+    "title": {
+      "text": "Beep Boop"
+    },
+    "description": {
+      "text": "This tests for a list of integers"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "all_ints": {
+      "trigger": "datacriteria:list_of_ints",
+      "conditions": {
+        "ints": [ 1, 2, 3, 4, 5 ]
+      }
+    },
+    "any_of": {
+      "trigger": "datacriteria:list_of_ints",
+      "conditions": {
+        "ints": {
+          "match": "any",
+          "values": [ 3, 9, 0 ]
+        }
+      }
+    },
+    "none_of": {
+      "trigger": "datacriteria:list_of_ints",
+      "conditions": {
+        "ints": {
+          "match": "none",
+          "values": [ 99, -10, 6 ]
+        }
+      }
+    }
+  }
+}

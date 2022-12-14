@@ -6,23 +6,6 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
-sourceSets {
-    test {
-        compileClasspath += main.compileClasspath + main.output
-        runtimeClasspath += main.runtimeClasspath
-    }
-}
-
-loom {
-    runs {
-        test {
-            client()
-            source sourceSets.test
-            name = "Test Client"
-        }
-    }
-}
-
 repositories {
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -39,6 +22,8 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation project(":")
 }
 
 processResources {
