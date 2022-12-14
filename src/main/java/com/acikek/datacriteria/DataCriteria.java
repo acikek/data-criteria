@@ -11,6 +11,8 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class DataCriteria implements ModInitializer {
 
     public static final String ID = "datacriteria";
@@ -30,6 +32,11 @@ public class DataCriteria implements ModInitializer {
                         true, serverPlayer,
                         Parameters.block((ServerWorld) serverPlayer.world, hitResult.getBlockPos()), // block predicate parameter
                         player.getStackInHand(hand) // item predicate parameter
+                );
+                DataCriteriaAPI.trigger(
+                        new Identifier("datacriteria:list_of_ints"),
+                        true, serverPlayer,
+                        List.of(1, 2, 3, 4, 5)
                 );
             }
             return ActionResult.PASS;

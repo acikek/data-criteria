@@ -7,6 +7,15 @@ import java.util.function.Function;
 
 public class JsonPredicateContainer<T, P extends JsonPredicate<T, ?>> {
 
+    public static class Typed<T, P extends JsonPredicate<T, ?>> extends JsonPredicateContainer<T, P> {
+
+        public Class<T> type;
+
+        public Typed(Class<T> type) {
+            this.type = type;
+        }
+    }
+
     public Function<JsonElement, P> deserializer;
 
     public JsonPredicateContainer(Function<JsonElement, P> deserializer) {

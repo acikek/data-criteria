@@ -10,6 +10,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.BlockPredicate;
 import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.entity.DamageSourcePredicate;
 import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.util.Identifier;
@@ -78,6 +79,13 @@ public class JsonPredicates {
             }
     );
 
+    public static final JsonPredicateContainer<DelegateParameters.Damage, JsonPredicate<DelegateParameters.Damage, DamageSourcePredicate>> DAMAGE_SOURCE = new JsonPredicateContainer<>(
+            element -> {
+                DamageSourcePredicate predicate = DamageSourcePredicate.fromJson(element);
+                return new JsonPredicate<>(predicate, DelegateParameters.Damage.class, parameter -> predicate.test(parameter.player(), parameter.damageSource()), DamageSourcePredicate::toJson);
+            }
+    );
+
     public static void register(String name, JsonPredicateContainer<?, ?> container) {
         Registry.register(REGISTRY, DataCriteria.id(name), container);
     }
@@ -94,5 +102,6 @@ public class JsonPredicates {
         register("block_state", BLOCK_STATE);
         register("fluid_state", FLUID_STATE);
         register("location", LOCATION);
+        register("damage_source", DAMAGE_SOURCE);
     }
 }

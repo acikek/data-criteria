@@ -1,0 +1,29 @@
+{
+  "parent": "datacriteria:ring_bell",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond"
+    },
+    "title": {
+      "text": "Test 123"
+    },
+    "description": {
+      "text": "Ok"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "test": {
+      "trigger": "datacriteria:list_of_ints",
+      "conditions": {
+        "ints": {
+          "match": "any",
+          "values": [ 1, 2, 3, 4, 5 ]
+        }
+      }
+    }
+  }
+}

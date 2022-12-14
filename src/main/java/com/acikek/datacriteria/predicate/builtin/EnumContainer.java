@@ -7,12 +7,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.EnumUtils;
 
-public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer<T, JsonPredicate.Equality<T>> {
-
-    public Class<T> type;
+public class EnumContainer<T extends Enum<T>> extends JsonPredicateContainer.Typed<T, JsonPredicate.Equality<T>> {
 
     public EnumContainer(Class<T> type) {
-        this.type = type;
+        super(type);
     }
 
     @Override

@@ -1,0 +1,8 @@
+{
+  "parameters": [
+    {
+      "name": "ints",
+      "list_of": "datacriteria:int"
+    }
+  ]
+}
