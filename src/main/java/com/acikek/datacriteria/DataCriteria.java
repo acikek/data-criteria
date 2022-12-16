@@ -1,5 +1,6 @@
 package com.acikek.datacriteria;
 
+import com.acikek.datacriteria.predicate.JsonPredicates;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
@@ -18,5 +19,6 @@ public class DataCriteria implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing Data Criteria...");
+        JsonPredicates.register();
     }
 }

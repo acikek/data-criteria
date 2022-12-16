@@ -180,7 +180,7 @@ public class JsonPredicates {
         Registry.register(REGISTRY, new Identifier(name), container);
     }
 
-    static {
+    public static void register() {
         // Basic
         register("int", INT);
         register("float", FLOAT);

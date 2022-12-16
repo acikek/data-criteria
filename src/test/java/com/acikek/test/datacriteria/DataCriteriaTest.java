@@ -1,4 +1,4 @@
-package com.acikek.test.dctest;
+package com.acikek.test.datacriteria;
 
 import com.acikek.datacriteria.api.DataCriteriaAPI;
 import com.acikek.datacriteria.api.Parameters;

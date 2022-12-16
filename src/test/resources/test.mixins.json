@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.acikek.datacriteria.test.mixin",
+  "package": "com.acikek.test.datacriteria.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
