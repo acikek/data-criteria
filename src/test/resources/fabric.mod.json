@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.acikek.test.datacriteria.DataCriteriaTest"
+      "com.acikek.test.datacriteriatest.DataCriteriaTest"
     ]
   },
   "mixins": [
