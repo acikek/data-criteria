@@ -60,10 +60,6 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
         trigger(player, conditions -> conditions.matches(debug, inputs));
     }
 
-    public void trigger(ServerPlayerEntity player, Object... inputs) {
-        trigger(false, player, inputs);
-    }
-
     public class Conditions extends AbstractCriterionConditions {
 
         public List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values;
