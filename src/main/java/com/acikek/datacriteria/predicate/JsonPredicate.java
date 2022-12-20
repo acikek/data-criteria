@@ -61,7 +61,7 @@ public class JsonPredicate<T, P> implements Predicate<T> {
         if (getType().isInstance(value)) {
             if (debug) {
                 DataCriteria.LOGGER.info("- Input value: {}", value);
-                DataCriteria.LOGGER.info("- Parameter value: {} ({})", this.value, toJson());
+                DataCriteria.LOGGER.info("- Parameter value: {} ({})", this.toJson(), this.value);
             }
             return test(getType().cast(value));
         }

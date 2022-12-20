@@ -30,6 +30,9 @@ public class Parameter<T, P extends JsonPredicate<T, ?>> {
         boolean listOf = JsonHelper.hasString(obj, "list_of");
         Identifier id = new Identifier(JsonHelper.getString(obj, listOf ? "list_of" : "type"));
         JsonPredicateContainer<T, P> containerType = (JsonPredicateContainer<T, P>) JsonPredicates.REGISTRY.get(id);
+        if (containerType == null) {
+            throw new IllegalArgumentException("container '" + id + "' not found");
+        }
         JsonPredicateContainer<?, ?> container = listOf
                 ? new ListContainer<>(containerType)
                 : containerType;
