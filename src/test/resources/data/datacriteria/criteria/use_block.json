@@ -2,11 +2,11 @@
   "parameters": [
     {
       "name": "block",
-      "type": "datacriteria:block"
+      "type": "minecraft:block"
     },
     {
       "name": "item",
-      "type": "datacriteria:item",
+      "type": "minecraft:item",
       "optional": true
     }
   ]

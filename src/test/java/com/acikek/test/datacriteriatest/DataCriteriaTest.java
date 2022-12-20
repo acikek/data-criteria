@@ -16,8 +16,6 @@ public class DataCriteriaTest implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
-
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 DataCriteriaAPI.trigger(
