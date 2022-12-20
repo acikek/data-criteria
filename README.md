@@ -49,7 +49,7 @@ DataCriteriaAPI.trigger(
 );
 ```
 
-See the [wiki](https://github.com/acikek/data-criteria/wiki)
+See the [wiki](https://github.com/acikek/data-criteria/wiki) for complete documentation.
 
 ## License
 
