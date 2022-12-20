@@ -4,8 +4,14 @@
   "version": "${version}",
   "name": "Data Criteria",
   "description": "",
-  "authors": [],
-  "contact": {},
+  "authors": [
+    "acikek"
+  ],
+  "contact": {
+    "homepage": "https://github.com/acikek/data-criteria#README",
+    "sources": "https://github.com/acikek/data-criteria",
+    "issues": "https://github.com/acikek/data-criteria/issues"
+  },
   "license": "MIT",
   "icon": "assets/datacriteria/icon.png",
   "environment": "*",
