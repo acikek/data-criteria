@@ -2,6 +2,10 @@
 
 Data-driven advancement criteria.
 
+## Why?
+
+Check out [this page](https://github.com/acikek/data-criteria/wiki/Why%3F) for an example of creating advancement criteria without this mod. See the [rest of the wiki](https://github.com/acikek/data-criteria/wiki) for complete documentation.
+
 ## Example
 
 1. Create a criterion file. `parameters` is an **ordered list** of parameter names and types to pass in and check for. Make sure to group optional parameters at the end.
@@ -26,15 +30,18 @@ Data-driven advancement criteria.
 2. Use the criterion within an advancement file.
 
 ```json5
-// ...
-"criteria": {
-  "test": {
-    "trigger": "namespace:int_and_bool",
-    "conditions": {
-      "number": 5,
-      // As 'possible' is optional, it's not required in the conditions
+{
+  // ...
+  "criteria": {
+    "test": {
+      "trigger": "namespace:int_and_bool",
+      "conditions": {
+        "number": 5,
+        // As 'possible' is optional, it's not required in the conditions
+      }
     }
   }
+  // ...
 }
 ```
 
@@ -48,8 +55,6 @@ DataCriteriaAPI.trigger(
     10, true
 );
 ```
-
-See the [wiki](https://github.com/acikek/data-criteria/wiki) for complete documentation.
 
 ## License
 

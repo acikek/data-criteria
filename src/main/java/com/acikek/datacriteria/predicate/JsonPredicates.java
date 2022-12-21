@@ -17,8 +17,9 @@ import net.minecraft.predicate.block.BlockStatePredicate;
 import net.minecraft.predicate.entity.*;
 import net.minecraft.predicate.item.EnchantmentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Map;
 
@@ -86,7 +87,7 @@ public class JsonPredicates {
 
     public static final JsonPredicateContainer<BlockState, JsonPredicate<BlockState, BlockStatePredicate>> BLOCK_STATE = new JsonPredicateContainer<>(element -> {
         Identifier id = new Identifier(element.getAsString());
-        BlockStatePredicate predicate = BlockStatePredicate.forBlock(Registry.BLOCK.get(id));
+        BlockStatePredicate predicate = BlockStatePredicate.forBlock(Registries.BLOCK.get(id));
         return new JsonPredicate<>(predicate, BlockState.class, predicate::test, unused -> new JsonPrimitive(id.toString()));
     });
 

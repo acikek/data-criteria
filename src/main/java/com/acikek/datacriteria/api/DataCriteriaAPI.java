@@ -6,9 +6,9 @@ import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.acikek.datacriteria.predicate.builtin.EnumContainer;
 import com.google.gson.JsonElement;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Function;
 

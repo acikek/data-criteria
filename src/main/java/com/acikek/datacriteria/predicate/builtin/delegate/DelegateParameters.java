@@ -21,7 +21,7 @@ public class DelegateParameters {
 
     public record DamageParameter(ServerPlayerEntity player, DamageSource source, float dealt, float taken, boolean blocked) {}
 
-    public record DistanceParameter(double x1, double y1, double z1, double x2, double y2, double z2) {};
+    public record DistanceParameter(double x1, double y1, double z1, double x2, double y2, double z2) {}
 
     public record LocationParameter(ServerWorld world, double x, double y, double z) {}
 }
