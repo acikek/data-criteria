@@ -29,10 +29,11 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
     }
 
     public static DataCriterion fromJson(Identifier id, JsonObject obj) {
+        boolean defaultOptional = JsonHelper.getBoolean(obj, "optional", false);
         JsonArray parameters = JsonHelper.getArray(obj, "parameters");
         List<Parameter<?, ?>> containers = new ArrayList<>();
         for (JsonElement element : parameters) {
-            containers.add(Parameter.fromJson(element.getAsJsonObject()));
+            containers.add(Parameter.fromJson(element.getAsJsonObject(), defaultOptional));
         }
         return new DataCriterion(id, containers);
     }
