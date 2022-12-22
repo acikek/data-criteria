@@ -31,7 +31,11 @@ public class ListContainer<T, P extends JsonPredicate<T, ?>, C extends JsonPredi
                 ? element.getAsJsonArray()
                 : JsonHelper.getArray(element.getAsJsonObject(), "values");
         for (JsonElement entry : predicateArray) {
-            predicates.add(container.fromJson(entry));
+            var predicate = container.fromJson(entry);
+            if (predicate == null) {
+                throw new IllegalArgumentException("entry '" + entry + "' deserialized as null");
+            }
+            predicates.add(predicate);
         }
         Predicate.Type matchType = isArray
                 ? Predicate.Type.ALL

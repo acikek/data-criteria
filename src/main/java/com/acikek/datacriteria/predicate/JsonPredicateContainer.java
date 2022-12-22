@@ -27,6 +27,9 @@ public class JsonPredicateContainer<T, P extends JsonPredicate<T, ?>> {
     }
 
     public P fromJson(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
+            return null;
+        }
         return deserializer.apply(element);
     }
 

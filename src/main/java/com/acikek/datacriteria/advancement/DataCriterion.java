@@ -46,7 +46,11 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                         throw new IllegalStateException("missing predicate '" + parameter.name + "'");
                     }
                     JsonElement element = obj.get(parameter.name);
-                    return new Pair<>(parameter, parameter.container.fromJson(element));
+                    var predicate = parameter.container.fromJson(element);
+                    if (obj.has(parameter.name) && predicate == null) {
+                        throw new IllegalStateException("predicate '" + parameter.name + "' deserialized as null");
+                    }
+                    return new Pair<>(parameter, predicate);
                 })
                 .toList();
         return new Conditions(playerPredicate, result);
