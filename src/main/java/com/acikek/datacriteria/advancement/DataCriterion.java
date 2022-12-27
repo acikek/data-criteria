@@ -85,7 +85,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
             for (int i = 0; i < values.size(); i++) {
                 Parameter<?, ?> parameter = values.get(i).getLeft();
                 if (debug) {
-                    DataCriteria.LOGGER.info("Parameter #{}: {}", i, parameter.id);
+                    DataCriteria.LOGGER.info("Parameter #{}: {}", i + 1, parameter.id);
                 }
                 if (i >= inputs.length) {
                     if (parameter.optional) {
