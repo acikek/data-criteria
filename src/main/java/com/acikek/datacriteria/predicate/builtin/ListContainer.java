@@ -31,7 +31,7 @@ public class ListContainer<T, P extends JsonPredicate<T, ?>, C extends JsonPredi
                 ? element.getAsJsonArray()
                 : JsonHelper.getArray(element.getAsJsonObject(), "values");
         for (JsonElement entry : predicateArray) {
-            var predicate = container.fromJson(entry);
+            var predicate = container.checkedFromJson(entry);
             if (predicate == null) {
                 throw new IllegalArgumentException("entry '" + entry + "' deserialized as null");
             }

@@ -27,10 +27,14 @@ public class JsonPredicateContainer<T, P extends JsonPredicate<T, ?>> {
     }
 
     public P fromJson(JsonElement element) {
+        return deserializer.apply(element);
+    }
+
+    public P checkedFromJson(JsonElement element) {
         if (element == null || element.isJsonNull()) {
             return null;
         }
-        return deserializer.apply(element);
+        return fromJson(element);
     }
 
     public static <T> JsonPredicateContainer<T, JsonPredicate.Equality<T>> createEquality(Class<T> type, Function<T, JsonElement> serializer, Function<JsonElement, T> deserializer) {
