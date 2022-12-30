@@ -25,7 +25,7 @@ public class Parameter<T, P extends JsonPredicate<T, ?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, P extends JsonPredicate<T, ?>> Parameter<T, P> fromJson(JsonObject obj) {
+    public static <T, P extends JsonPredicate<T, ?>> Parameter<T, P> fromJson(JsonObject obj, boolean defaultOptional) {
         String name = JsonHelper.getString(obj, "name");
         boolean listOf = JsonHelper.hasString(obj, "list_of");
         Identifier id = new Identifier(JsonHelper.getString(obj, listOf ? "list_of" : "type"));
@@ -36,7 +36,7 @@ public class Parameter<T, P extends JsonPredicate<T, ?>> {
         JsonPredicateContainer<?, ?> container = listOf
                 ? new ListContainer<>(containerType)
                 : containerType;
-        boolean optional = JsonHelper.getBoolean(obj, "optional", false);
+        boolean optional = JsonHelper.getBoolean(obj, "optional", defaultOptional);
         return new Parameter<>(name, (JsonPredicateContainer<T, P>) container, optional, id);
     }
 }

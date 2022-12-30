@@ -30,6 +30,13 @@ public class JsonPredicateContainer<T, P extends JsonPredicate<T, ?>> {
         return deserializer.apply(element);
     }
 
+    public P checkedFromJson(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
+            return null;
+        }
+        return fromJson(element);
+    }
+
     public static <T> JsonPredicateContainer<T, JsonPredicate.Equality<T>> createEquality(Class<T> type, Function<T, JsonElement> serializer, Function<JsonElement, T> deserializer) {
         var builder = new Builder<T, T>()
                 .type(type)

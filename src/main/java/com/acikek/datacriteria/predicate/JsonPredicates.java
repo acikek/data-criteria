@@ -1,23 +1,20 @@
 package com.acikek.datacriteria.predicate;
 
 import com.acikek.datacriteria.DataCriteria;
-import com.acikek.datacriteria.predicate.builtin.delegate.EntityCheckContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.DelegateParameters;
+import com.acikek.datacriteria.predicate.builtin.delegate.EntityCheckContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.StateContainer;
 import com.google.gson.JsonPrimitive;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.predicate.*;
-import net.minecraft.predicate.block.BlockStatePredicate;
 import net.minecraft.predicate.entity.*;
 import net.minecraft.predicate.item.EnchantmentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
@@ -83,12 +80,6 @@ public class JsonPredicates {
     public static final JsonPredicateContainer<DelegateParameters.BlockParameter, JsonPredicate<DelegateParameters.BlockParameter, BlockPredicate>> BLOCK = new JsonPredicateContainer<>(element -> {
         BlockPredicate predicate = BlockPredicate.fromJson(element);
         return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos()), BlockPredicate::toJson);
-    });
-
-    public static final JsonPredicateContainer<BlockState, JsonPredicate<BlockState, BlockStatePredicate>> BLOCK_STATE = new JsonPredicateContainer<>(element -> {
-        Identifier id = new Identifier(element.getAsString());
-        BlockStatePredicate predicate = BlockStatePredicate.forBlock(Registries.BLOCK.get(id));
-        return new JsonPredicate<>(predicate, BlockState.class, predicate::test, unused -> new JsonPrimitive(id.toString()));
     });
 
     public static final JsonPredicateContainer<DelegateParameters.BlockParameter, JsonPredicate<DelegateParameters.BlockParameter, FluidPredicate>> FLUID = new JsonPredicateContainer<>(element -> {
@@ -191,11 +182,10 @@ public class JsonPredicates {
         register("id", IDENTIFIER);
         // Items
         registerMc("item", ITEM);
-        registerMc("enchantments", ENCHANTMENTS);
+        registerMc("enchantment", ENCHANTMENTS);
         // Blocks
         registerMc("state", STATE);
         registerMc("block", BLOCK);
-        registerMc("block_state", BLOCK_STATE);
         registerMc("fluid", FLUID);
         registerMc("light_level", LIGHT_LEVEL);
         // Entities

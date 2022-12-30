@@ -29,10 +29,11 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
     }
 
     public static DataCriterion fromJson(Identifier id, JsonObject obj) {
+        boolean defaultOptional = JsonHelper.getBoolean(obj, "optional", false);
         JsonArray parameters = JsonHelper.getArray(obj, "parameters");
         List<Parameter<?, ?>> containers = new ArrayList<>();
         for (JsonElement element : parameters) {
-            containers.add(Parameter.fromJson(element.getAsJsonObject()));
+            containers.add(Parameter.fromJson(element.getAsJsonObject(), defaultOptional));
         }
         return new DataCriterion(id, containers);
     }
@@ -45,7 +46,11 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                         throw new IllegalStateException("missing predicate '" + parameter.name + "'");
                     }
                     JsonElement element = obj.get(parameter.name);
-                    return new Pair<>(parameter, parameter.container.fromJson(element));
+                    var predicate = parameter.container.checkedFromJson(element);
+                    if (obj.has(parameter.name) && predicate == null) {
+                        throw new IllegalStateException("predicate '" + parameter.name + "' deserialized as null");
+                    }
+                    return new Pair<>(parameter, predicate);
                 })
                 .toList();
         return new Conditions(playerPredicate, result);
@@ -80,7 +85,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
             for (int i = 0; i < values.size(); i++) {
                 Parameter<?, ?> parameter = values.get(i).getLeft();
                 if (debug) {
-                    DataCriteria.LOGGER.info("Parameter #{}: {}", i, parameter.id);
+                    DataCriteria.LOGGER.info("Parameter #{}: {}", i + 1, parameter.id);
                 }
                 if (i >= inputs.length) {
                     if (parameter.optional) {
