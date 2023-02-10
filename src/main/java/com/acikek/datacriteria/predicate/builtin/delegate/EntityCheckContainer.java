@@ -7,8 +7,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 
 import java.util.function.Predicate;
 
@@ -17,13 +17,13 @@ public class EntityCheckContainer extends JsonPredicateContainer<Entity, JsonPre
     public static BiMap<String, Predicate<Entity>> VALUES = HashBiMap.create();
 
     static {
-        VALUES.put("exists", EntityPredicates.VALID_ENTITY);
-        VALUES.put("exists_and_living", EntityPredicates.VALID_LIVING_ENTITY);
-        VALUES.put("not_mounted", EntityPredicates.NOT_MOUNTED);
-        VALUES.put("is_inventory", EntityPredicates.VALID_INVENTORIES);
-        VALUES.put("not_creative_nor_spectator", EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR);
-        VALUES.put("not_spectator", EntityPredicates.EXCEPT_SPECTATOR);
-        VALUES.put("can_collide", EntityPredicates.CAN_COLLIDE);
+        VALUES.put("exists", EntitySelector.ENTITY_STILL_ALIVE);
+        VALUES.put("exists_and_living", EntitySelector.LIVING_ENTITY_STILL_ALIVE);
+        VALUES.put("not_mounted", EntitySelector.ENTITY_NOT_BEING_RIDDEN);
+        VALUES.put("is_inventory", EntitySelector.CONTAINER_ENTITY_SELECTOR);
+        VALUES.put("not_creative_nor_spectator", EntitySelector.NO_CREATIVE_OR_SPECTATOR);
+        VALUES.put("not_spectator", EntitySelector.NO_SPECTATORS);
+        VALUES.put("can_collide", EntitySelector.CAN_BE_COLLIDED_WITH);
     }
 
     @Override

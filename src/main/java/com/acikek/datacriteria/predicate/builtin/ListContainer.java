@@ -7,7 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.EnumUtils;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class ListContainer<T, P extends JsonPredicate<T, ?>, C extends JsonPredi
         List<P> predicates = new ArrayList<>();
         JsonArray predicateArray = isArray
                 ? element.getAsJsonArray()
-                : JsonHelper.getArray(element.getAsJsonObject(), "values");
+                : GsonHelper.getAsJsonArray(element.getAsJsonObject(), "values");
         for (JsonElement entry : predicateArray) {
             var predicate = container.checkedFromJson(entry);
             if (predicate == null) {
@@ -39,7 +39,7 @@ public class ListContainer<T, P extends JsonPredicate<T, ?>, C extends JsonPredi
         }
         Predicate.Type matchType = isArray
                 ? Predicate.Type.ALL
-                : EnumUtils.getEnumIgnoreCase(Predicate.Type.class, JsonHelper.getString(element.getAsJsonObject(), "match"));
+                : EnumUtils.getEnumIgnoreCase(Predicate.Type.class, GsonHelper.getAsString(element.getAsJsonObject(), "match"));
         return new Predicate<>(predicates, type, matchType);
     }
 

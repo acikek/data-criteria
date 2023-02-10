@@ -1,8 +1,8 @@
 package com.acikek.datacriteria.mixin;
 
 import com.acikek.datacriteria.load.ParameterLoader;
-import net.minecraft.resource.ResourceReloader;
-import net.minecraft.server.DataPackContents;
+import net.minecraft.server.ReloadableServerResources;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Mixin(DataPackContents.class)
-public class DataPackContentsMixin {
+@Mixin(ReloadableServerResources.class)
+public class ReloadableServerResourcesMixin {
 
     private final ParameterLoader datacriteria$parameterLoader = new ParameterLoader();
 
-    @Inject(method = "getContents", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
-    private void datacriteria$prependParameterLoader(CallbackInfoReturnable<List<ResourceReloader>> cir) {
-        List<ResourceReloader> reloaders = new ArrayList<>(cir.getReturnValue());
+    @Inject(method = "listeners", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD, at = @At("RETURN"))
+    private void datacriteria$prependParameterLoader(CallbackInfoReturnable<List<PreparableReloadListener>> cir) {
+        List<PreparableReloadListener> reloaders = new ArrayList<>(cir.getReturnValue());
         reloaders.add(0, datacriteria$parameterLoader);
         cir.setReturnValue(Collections.unmodifiableList(reloaders));
     }

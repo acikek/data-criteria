@@ -5,23 +5,23 @@ import com.acikek.datacriteria.advancement.Parameter;
 import com.acikek.datacriteria.api.CriterionBuilder;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.acikek.datacriteria.predicate.JsonPredicates;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CriterionBuilderImpl implements CriterionBuilder {
 
-    public Identifier id;
+    public ResourceLocation id;
     public List<Parameter<?, ?>> parameters = new ArrayList<>();
 
-    public CriterionBuilderImpl(Identifier id) {
+    public CriterionBuilderImpl(ResourceLocation id) {
         this.id = id;
     }
 
     @Override
     public CriterionBuilder addParameter(String name, JsonPredicateContainer<?, ?> container, boolean optional) {
-        Identifier containerId = JsonPredicates.REGISTRY.getId(container);
+        ResourceLocation containerId = JsonPredicates.REGISTRY.get().getKey(container);
         parameters.add(new Parameter<>(name, container, optional, containerId));
         return this;
     }

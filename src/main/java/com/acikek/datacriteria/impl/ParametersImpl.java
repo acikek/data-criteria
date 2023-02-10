@@ -1,50 +1,50 @@
 package com.acikek.datacriteria.impl;
 
 import com.acikek.datacriteria.predicate.builtin.delegate.DelegateParameters;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.Vec3;
 
 public class ParametersImpl {
 
     public static DelegateParameters.StateParameter<BlockState> state(BlockState state) {
-        return new DelegateParameters.StateParameter<>(state.getBlock().getStateManager(), state);
+        return new DelegateParameters.StateParameter<>(state.getBlock().getStateDefinition(), state);
     }
 
     public static DelegateParameters.StateParameter<FluidState> state(FluidState state) {
-        return new DelegateParameters.StateParameter<>(state.getFluid().getStateManager(), state);
+        return new DelegateParameters.StateParameter<>(state.getType().getStateDefinition(), state);
     }
 
-    public static DelegateParameters.BlockParameter block(ServerWorld world, BlockPos pos) {
+    public static DelegateParameters.BlockParameter block(ServerLevel world, BlockPos pos) {
         return new DelegateParameters.BlockParameter(world, pos);
     }
 
-    public static DelegateParameters.EntityParameter entity(ServerPlayerEntity player, Entity entity) {
-        return ParametersImpl.entity(player.getWorld(), player.getPos(), entity);
+    public static DelegateParameters.EntityParameter entity(ServerPlayer player, Entity entity) {
+        return ParametersImpl.entity(player.getLevel(), player.position(), entity);
     }
 
-    public static DelegateParameters.EntityParameter entity(ServerWorld world, Vec3d pos, Entity entity) {
+    public static DelegateParameters.EntityParameter entity(ServerLevel world, Vec3 pos, Entity entity) {
         return new DelegateParameters.EntityParameter(world, pos, entity);
     }
 
-    public static DelegateParameters.DamageSourceParameter damageSource(ServerPlayerEntity player, DamageSource source) {
-        return damageSource(player.getWorld(), player.getPos(), source);
+    public static DelegateParameters.DamageSourceParameter damageSource(ServerPlayer player, DamageSource source) {
+        return damageSource(player.getLevel(), player.position(), source);
     }
 
-    public static DelegateParameters.DamageSourceParameter damageSource(ServerWorld world, Vec3d pos, DamageSource source) {
+    public static DelegateParameters.DamageSourceParameter damageSource(ServerLevel world, Vec3 pos, DamageSource source) {
         return new DelegateParameters.DamageSourceParameter(world, pos, source);
     }
 
-    public static DelegateParameters.DamageParameter damage(ServerPlayerEntity player, DamageSource source, float dealt, float taken, boolean blocked) {
+    public static DelegateParameters.DamageParameter damage(ServerPlayer player, DamageSource source, float dealt, float taken, boolean blocked) {
         return new DelegateParameters.DamageParameter(player, source, dealt, taken, blocked);
     }
 
-    public static DelegateParameters.LocationParameter location(ServerWorld world, double x, double y, double z) {
+    public static DelegateParameters.LocationParameter location(ServerLevel world, double x, double y, double z) {
         return new DelegateParameters.LocationParameter(world, x, y, z);
     }
 

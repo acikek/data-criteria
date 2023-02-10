@@ -5,38 +5,39 @@ import com.acikek.datacriteria.predicate.builtin.delegate.DelegateParameters;
 import com.acikek.datacriteria.predicate.builtin.delegate.EntityCheckContainer;
 import com.acikek.datacriteria.predicate.builtin.delegate.StateContainer;
 import com.google.gson.JsonPrimitive;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.predicate.*;
-import net.minecraft.predicate.entity.*;
-import net.minecraft.predicate.item.EnchantmentPredicate;
-import net.minecraft.predicate.item.ItemPredicate;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
 public class JsonPredicates {
 
-    public static final Registry<JsonPredicateContainer<?, ?>> REGISTRY =
+    public static Supplier<IForgeRegistry<JsonPredicateContainer<?, ?>>> REGISTRY;
+
+    /*public static final Registry<JsonPredicateContainer<?, ?>> REGISTRY =
             (Registry<JsonPredicateContainer<?, ?>>) (Object)
-            FabricRegistryBuilder.createSimple(JsonPredicateContainer.class, DataCriteria.id("container")).buildAndRegister();
+            FabricRegistryBuilder.createSimple(JsonPredicateContainer.class, DataCriteria.id("container")).buildAndRegister();*/
 
     //#region Basic
 
-    public static final JsonPredicateContainer<Integer, JsonPredicate<Integer, NumberRange.IntRange>> INT = new JsonPredicateContainer<>(element -> {
-        NumberRange.IntRange range = NumberRange.IntRange.fromJson(element);
-        return new JsonPredicate<>(range, Integer.class, range::test, NumberRange::toJson);
+    public static final JsonPredicateContainer<Integer, JsonPredicate<Integer, MinMaxBounds.Ints>> INT = new JsonPredicateContainer<>(element -> {
+        MinMaxBounds.Ints range = MinMaxBounds.Ints.fromJson(element);
+        return new JsonPredicate<>(range, Integer.class, range::matches, MinMaxBounds::serializeToJson);
     });
 
-    public static final JsonPredicateContainer<Double, JsonPredicate<Double, NumberRange.FloatRange>> FLOAT = new JsonPredicateContainer<>(element -> {
-        NumberRange.FloatRange range = NumberRange.FloatRange.fromJson(element);
-        return new JsonPredicate<>(range, Double.class, range::test, NumberRange::toJson);
+    public static final JsonPredicateContainer<Double, JsonPredicate<Double, MinMaxBounds.Doubles>> FLOAT = new JsonPredicateContainer<>(element -> {
+        MinMaxBounds.Doubles range = MinMaxBounds.Doubles.fromJson(element);
+        return new JsonPredicate<>(range, Double.class, range::matches, MinMaxBounds::serializeToJson);
     });
 
     public static final JsonPredicateContainer<Boolean, JsonPredicate.Equality<Boolean>> BOOLEAN = JsonPredicateContainer.createPrimitive(
@@ -51,10 +52,10 @@ public class JsonPredicates {
             String.class, JsonPrimitive::new, JsonPrimitive::getAsString
     );
 
-    public static final JsonPredicateContainer<Identifier, JsonPredicate.Equality<Identifier>> IDENTIFIER = JsonPredicateContainer.createEquality(
-            Identifier.class,
+    public static final JsonPredicateContainer<ResourceLocation, JsonPredicate.Equality<ResourceLocation>> IDENTIFIER = JsonPredicateContainer.createEquality(
+            ResourceLocation.class,
             identifier -> new JsonPrimitive(identifier.toString()),
-            element -> new Identifier(element.getAsString())
+            element -> new ResourceLocation(element.getAsString())
     );
 
     //#endregion Basic
@@ -63,12 +64,12 @@ public class JsonPredicates {
 
     public static final JsonPredicateContainer<ItemStack, JsonPredicate<ItemStack, ItemPredicate>> ITEM = new JsonPredicateContainer<>(element -> {
         ItemPredicate predicate = ItemPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, ItemStack.class, predicate::test, ItemPredicate::toJson);
+        return new JsonPredicate<>(predicate, ItemStack.class, predicate::matches, ItemPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<Map<Enchantment, Integer>, JsonPredicate<Map<Enchantment, Integer>, EnchantmentPredicate>> ENCHANTMENTS = new JsonPredicateContainer<>(element -> {
-        EnchantmentPredicate predicate = EnchantmentPredicate.deserialize(element);
-        return new JsonPredicate<>(predicate, (Class<Map<Enchantment, Integer>>) (Class<?>) Map.class, predicate::test, EnchantmentPredicate::serialize);
+        EnchantmentPredicate predicate = EnchantmentPredicate.fromJson(element);
+        return new JsonPredicate<>(predicate, (Class<Map<Enchantment, Integer>>) (Class<?>) Map.class, predicate::containedIn, EnchantmentPredicate::serializeToJson);
     });
 
     //#endregion Items
@@ -79,17 +80,17 @@ public class JsonPredicates {
 
     public static final JsonPredicateContainer<DelegateParameters.BlockParameter, JsonPredicate<DelegateParameters.BlockParameter, BlockPredicate>> BLOCK = new JsonPredicateContainer<>(element -> {
         BlockPredicate predicate = BlockPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos()), BlockPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.matches(parameter.world(), parameter.pos()), BlockPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.BlockParameter, JsonPredicate<DelegateParameters.BlockParameter, FluidPredicate>> FLUID = new JsonPredicateContainer<>(element -> {
         FluidPredicate predicate = FluidPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos()), FluidPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.matches(parameter.world(), parameter.pos()), FluidPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.BlockParameter, JsonPredicate<DelegateParameters.BlockParameter, LightPredicate>> LIGHT_LEVEL = new JsonPredicateContainer<>(element -> {
         LightPredicate predicate = LightPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos()), LightPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.BlockParameter.class, parameter -> predicate.matches(parameter.world(), parameter.pos()), LightPredicate::serializeToJson);
     });
 
     //#endregion Blocks
@@ -100,47 +101,47 @@ public class JsonPredicates {
 
     public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, EntityPredicate>> ENTITY = new JsonPredicateContainer<>(element -> {
         EntityPredicate predicate = EntityPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos(), parameter.entity()), EntityPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.matches(parameter.world(), parameter.pos(), parameter.entity()), EntityPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<EntityType<?>, JsonPredicate<EntityType<?>, EntityTypePredicate>> ENTITY_TYPE = new JsonPredicateContainer<>(element -> {
         EntityTypePredicate predicate = EntityTypePredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, (Class<EntityType<?>>) (Class<?>) EntityType.class, predicate::matches, EntityTypePredicate::toJson);
+        return new JsonPredicate<>(predicate, (Class<EntityType<?>>) (Class<?>) EntityType.class, predicate::matches, EntityTypePredicate::serializeToJson);
     });
 
-    public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, TypeSpecificPredicate>> ENTITY_VARIANT = new JsonPredicateContainer<>(element -> {
-        TypeSpecificPredicate predicate = TypeSpecificPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.test(parameter.entity(), parameter.world(), parameter.pos()), TypeSpecificPredicate::toJson);
+    public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, EntitySubPredicate>> ENTITY_VARIANT = new JsonPredicateContainer<>(element -> {
+        EntitySubPredicate predicate = EntitySubPredicate.fromJson(element);
+        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.matches(parameter.entity(), parameter.world(), parameter.pos()), EntitySubPredicate::serialize);
     });
 
-    public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, EntityEffectPredicate>> ENTITY_EFFECTS = new JsonPredicateContainer<>(element -> {
-        EntityEffectPredicate predicate = EntityEffectPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, Entity.class, predicate::test, EntityEffectPredicate::toJson);
+    public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, MobEffectsPredicate>> ENTITY_EFFECTS = new JsonPredicateContainer<>(element -> {
+        MobEffectsPredicate predicate = MobEffectsPredicate.fromJson(element);
+        return new JsonPredicate<>(predicate, Entity.class, predicate::matches, MobEffectsPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, EntityEquipmentPredicate>> ENTITY_EQUIPMENT = new JsonPredicateContainer<>(element -> {
         EntityEquipmentPredicate predicate = EntityEquipmentPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, Entity.class, predicate::test, EntityEquipmentPredicate::toJson);
+        return new JsonPredicate<>(predicate, Entity.class, predicate::matches, EntityEquipmentPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, EntityFlagsPredicate>> ENTITY_FLAGS = new JsonPredicateContainer<>(element -> {
         EntityFlagsPredicate predicate = EntityFlagsPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, Entity.class, predicate::test, EntityFlagsPredicate::toJson);
+        return new JsonPredicate<>(predicate, Entity.class, predicate::matches, EntityFlagsPredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, PlayerPredicate>> PLAYER = new JsonPredicateContainer<>(element -> {
         PlayerPredicate predicate = PlayerPredicate.fromJson(element.getAsJsonObject());
-        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.test(parameter.entity(), parameter.world(), parameter.pos()), TypeSpecificPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.matches(parameter.entity(), parameter.world(), parameter.pos()), EntitySubPredicate::serialize);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.DamageSourceParameter, JsonPredicate<DelegateParameters.DamageSourceParameter, DamageSourcePredicate>> DAMAGE_SOURCE = new JsonPredicateContainer<>(element -> {
         DamageSourcePredicate predicate = DamageSourcePredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.DamageSourceParameter.class, parameter -> predicate.test(parameter.world(), parameter.pos(), parameter.source()), DamageSourcePredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.DamageSourceParameter.class, parameter -> predicate.matches(parameter.world(), parameter.pos(), parameter.source()), DamageSourcePredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.DamageParameter, JsonPredicate<DelegateParameters.DamageParameter, DamagePredicate>> DAMAGE = new JsonPredicateContainer<>(element -> {
         DamagePredicate predicate = DamagePredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.DamageParameter.class, parameter -> predicate.test(parameter.player(), parameter.source(), parameter.dealt(), parameter.taken(), parameter.blocked()), DamagePredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.DamageParameter.class, parameter -> predicate.matches(parameter.player(), parameter.source(), parameter.dealt(), parameter.taken(), parameter.blocked()), DamagePredicate::serializeToJson);
     });
 
     //#endregion Entiries
@@ -149,27 +150,34 @@ public class JsonPredicates {
 
     public static final JsonPredicateContainer<DelegateParameters.DistanceParameter, JsonPredicate<DelegateParameters.DistanceParameter, DistancePredicate>> DISTANCE = new JsonPredicateContainer<>(element -> {
         DistancePredicate predicate = DistancePredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.DistanceParameter.class, parameter -> predicate.test(parameter.x1(), parameter.y1(), parameter.z1(), parameter.x2(), parameter.y2(), parameter.z2()), DistancePredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.DistanceParameter.class, parameter -> predicate.matches(parameter.x1(), parameter.y1(), parameter.z1(), parameter.x2(), parameter.y2(), parameter.z2()), DistancePredicate::serializeToJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.LocationParameter, JsonPredicate<DelegateParameters.LocationParameter, LocationPredicate>> LOCATION = new JsonPredicateContainer<>(element -> {
         LocationPredicate predicate = LocationPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.LocationParameter.class, parameter -> predicate.test(parameter.world(), parameter.x(), parameter.y(), parameter.z()), LocationPredicate::toJson);
+        return new JsonPredicate<>(predicate, DelegateParameters.LocationParameter.class, parameter -> predicate.matches(parameter.world(), parameter.x(), parameter.y(), parameter.z()), LocationPredicate::serializeToJson);
     });
 
-    public static final JsonPredicateContainer<NbtElement, JsonPredicate<NbtElement, NbtPredicate>> NBT = new JsonPredicateContainer<>(element -> {
+    public static final JsonPredicateContainer<Tag, JsonPredicate<Tag, NbtPredicate>> NBT = new JsonPredicateContainer<>(element -> {
         NbtPredicate predicate = NbtPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, NbtElement.class, predicate::test, NbtPredicate::toJson);
+        return new JsonPredicate<>(predicate, Tag.class, predicate::matches, NbtPredicate::serializeToJson);
     });
 
     //#endregion Misc
 
+    public static void createRegistry(NewRegistryEvent event) {
+        REGISTRY = event.create(new RegistryBuilder<JsonPredicateContainer<?, ?>>()
+                .setName(DataCriteria.id("container"))
+                .setIDRange(1, Integer.MAX_VALUE - 1)
+                .disableSaving());
+    }
+
     public static void register(String name, JsonPredicateContainer<?, ?> container) {
-        Registry.register(REGISTRY, DataCriteria.id(name), container);
+        REGISTRY.get().register(DataCriteria.id(name), container);
     }
 
     public static void registerMc(String name, JsonPredicateContainer<?, ?> container) {
-        Registry.register(REGISTRY, new Identifier(name), container);
+        REGISTRY.get().register(new ResourceLocation(name), container);
     }
 
     public static void register() {

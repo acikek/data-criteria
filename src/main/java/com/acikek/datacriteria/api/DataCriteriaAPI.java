@@ -6,27 +6,28 @@ import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.acikek.datacriteria.predicate.builtin.EnumContainer;
 import com.google.gson.JsonElement;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.Map;
 import java.util.function.Function;
 
 public class DataCriteriaAPI {
 
-    public static DataCriterion getDataCriterion(Identifier id) {
+    public static DataCriterion getDataCriterion(ResourceLocation id) {
         return DataCriteriaAPIImpl.getDataCriterion(id);
     }
 
-    public static void trigger(Identifier id, boolean debug, ServerPlayerEntity player, Object... inputs) {
+    public static void trigger(ResourceLocation id, boolean debug, ServerPlayer player, Object... inputs) {
         DataCriteriaAPIImpl.trigger(id, debug, player, inputs);
     }
 
-    public static void trigger(Identifier id, ServerPlayerEntity player, Object... inputs) {
+    public static void trigger(ResourceLocation id, ServerPlayer player, Object... inputs) {
         DataCriteriaAPIImpl.trigger(id, player, inputs);
     }
 
-    public static Registry<JsonPredicateContainer<?, ?>> getRegistry() {
+    public static IForgeRegistry<JsonPredicateContainer<?,?>> getRegistry() {
         return DataCriteriaAPIImpl.getRegistry();
     }
 

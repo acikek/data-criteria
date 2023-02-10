@@ -5,32 +5,28 @@ import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
-import net.minecraft.util.Pair;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
+public class DataCriterion extends SimpleCriterionTrigger<DataCriterion.Conditions> {
 
-    public Identifier id;
+    public ResourceLocation id;
     public List<Parameter<?, ?>> containers;
 
-    public DataCriterion(Identifier id, List<Parameter<?, ?>> containers) {
+    public DataCriterion(ResourceLocation id, List<Parameter<?, ?>> containers) {
         this.id = id;
         this.containers = containers;
     }
 
-    public static DataCriterion fromJson(Identifier id, JsonObject obj) {
-        boolean defaultOptional = JsonHelper.getBoolean(obj, "optional", false);
-        JsonArray parameters = JsonHelper.getArray(obj, "parameters");
+    public static DataCriterion fromJson(ResourceLocation id, JsonObject obj) {
+        boolean defaultOptional = GsonHelper.getAsBoolean(obj, "optional", false);
+        JsonArray parameters = GsonHelper.getAsJsonArray(obj, "parameters");
         List<Parameter<?, ?>> containers = new ArrayList<>();
         for (JsonElement element : parameters) {
             containers.add(Parameter.fromJson(element.getAsJsonObject(), defaultOptional));
@@ -39,8 +35,8 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> result = containers.stream()
+    protected Conditions createInstance(JsonObject obj, EntityPredicate.Composite playerPredicate, DeserializationContext predicateDeserializer) {
+        List<? extends Tuple<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> result = containers.stream()
                 .map(parameter -> {
                     if (!obj.has(parameter.name) && !parameter.optional) {
                         throw new IllegalStateException("missing predicate '" + parameter.name + "'");
@@ -50,26 +46,26 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                     if (obj.has(parameter.name) && predicate == null) {
                         throw new IllegalStateException("predicate '" + parameter.name + "' deserialized as null");
                     }
-                    return new Pair<>(parameter, predicate);
+                    return new Tuple<>(parameter, predicate);
                 })
                 .toList();
         return new Conditions(playerPredicate, result);
     }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
-    public void trigger(boolean debug, ServerPlayerEntity player, Object... inputs) {
+    public void trigger(boolean debug, ServerPlayer player, Object... inputs) {
         trigger(player, conditions -> conditions.matches(debug, inputs));
     }
 
-    public class Conditions extends AbstractCriterionConditions {
+    public class Conditions extends AbstractCriterionTriggerInstance {
 
-        public List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values;
+        public List<? extends Tuple<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values;
 
-        public Conditions(EntityPredicate.Extended entity, List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values) {
+        public Conditions(EntityPredicate.Composite entity, List<? extends Tuple<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values) {
             super(id, entity);
             this.values = values;
         }
@@ -83,7 +79,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                 throw new IllegalStateException("too many arguments given when triggering criterion '" + id + "'; " + inputs.length + " provided, maximum is " + values.size());
             }
             for (int i = 0; i < values.size(); i++) {
-                Parameter<?, ?> parameter = values.get(i).getLeft();
+                Parameter<?, ?> parameter = values.get(i).getA();
                 if (debug) {
                     DataCriteria.LOGGER.info("Parameter #{}: {}", i + 1, parameter.id);
                 }
@@ -96,7 +92,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
                     }
                     throw new IllegalStateException("no value given for parameter '" + parameter.name + "' in criterion '" + id + "'");
                 }
-                JsonPredicate<?, ?> predicate = values.get(i).getRight();
+                JsonPredicate<?, ?> predicate = values.get(i).getB();
                 if (predicate != null && !predicate.tryTest(inputs[i], debug)) {
                     if (debug) {
                         DataCriteria.LOGGER.info("Check failed! Aborting match...");
@@ -111,11 +107,11 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
         }
 
         @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
+        public JsonObject serializeToJson(SerializationContext predicateSerializer) {
             JsonObject obj = new JsonObject();
             for (var pair : values) {
-                if (pair.getRight() != null) {
-                    obj.add(pair.getLeft().name, pair.getRight().toJson());
+                if (pair.getB() != null) {
+                    obj.add(pair.getA().name, pair.getB().toJson());
                 }
             }
             return obj;

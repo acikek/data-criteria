@@ -3,11 +3,11 @@ package com.acikek.datacriteria.api;
 import com.acikek.datacriteria.advancement.DataCriterion;
 import com.acikek.datacriteria.impl.CriterionBuilderImpl;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public interface CriterionBuilder {
 
-    static CriterionBuilder create(Identifier id) {
+    static CriterionBuilder create(ResourceLocation id) {
         return new CriterionBuilderImpl(id);
     }
 

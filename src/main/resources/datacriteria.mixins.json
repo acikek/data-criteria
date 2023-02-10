@@ -4,8 +4,8 @@
   "package": "com.acikek.datacriteria.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CriteriaAccess",
-    "DataPackContentsMixin"
+    "CriteriaTriggersAccess",
+    "ReloadableServerResourcesMixin"
   ],
   "client": [
   ],

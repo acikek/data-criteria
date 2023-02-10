@@ -1,11 +1,24 @@
 pluginManagement {
     repositories {
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
         gradlePluginPortal()
+        maven {
+            name 'MinecraftForge'
+            url 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name 'ParchmentMC'
+            url 'https://maven.parchmentmc.org'
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString() == 'org.spongepowered.mixin') {
+                useModule("org.spongepowered:mixingradle:${requested.version}")
+            }
+        }
     }
 }
+
+rootProject.name = "${mod_name}"
 
 include ":test"

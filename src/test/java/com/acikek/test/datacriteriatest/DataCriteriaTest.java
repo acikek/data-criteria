@@ -1,20 +1,8 @@
 package com.acikek.test.datacriteriatest;
 
-import com.acikek.datacriteria.api.DataCriteriaAPI;
-import com.acikek.datacriteria.api.Parameters;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
+public class DataCriteriaTest /*implements ModInitializer*/ {
 
-import java.util.List;
-
-public class DataCriteriaTest implements ModInitializer {
-
-    @Override
+    /*@Override
     public void onInitialize() {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (player instanceof ServerPlayerEntity serverPlayer) {
@@ -35,5 +23,5 @@ public class DataCriteriaTest implements ModInitializer {
                     List.of(1, 2, 3, 4, 5)
             );
         });
-    }
+    }*/
 }

@@ -2,21 +2,20 @@ package com.acikek.datacriteria.load;
 
 import com.acikek.datacriteria.DataCriteria;
 import com.acikek.datacriteria.advancement.DataCriterion;
-import com.acikek.datacriteria.mixin.CriteriaAccess;
+import com.acikek.datacriteria.mixin.CriteriaTriggersAccess;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.resource.JsonDataLoader;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ParameterLoader extends JsonDataLoader implements IdentifiableResourceReloadListener {
+public class ParameterLoader extends SimpleJsonResourceReloadListener {
 
     public static List<DataCriterion> loaded = new ArrayList<>();
 
@@ -24,16 +23,16 @@ public class ParameterLoader extends JsonDataLoader implements IdentifiableResou
         super(new Gson(), "criteria");
     }
 
-    @Override
+    /*@Override
     public Identifier getFabricId() {
         return DataCriteria.id("criteria");
-    }
+    }*/
 
     @Override
-    protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
+    protected void apply(Map<ResourceLocation, JsonElement> prepared, ResourceManager manager, ProfilerFiller profiler) {
         // Remove existing criteria from registry
         for (DataCriterion existing : loaded) {
-            CriteriaAccess.getValues().values().remove(existing);
+            CriteriaTriggersAccess.getValues().values().remove(existing);
         }
         loaded.clear();
         // Load new criteria
@@ -43,7 +42,7 @@ public class ParameterLoader extends JsonDataLoader implements IdentifiableResou
             try {
                 DataCriterion criterion = DataCriterion.fromJson(file.getKey(), obj);
                 loaded.add(criterion);
-                CriteriaAccess.getValues().put(file.getKey(), criterion);
+                CriteriaTriggersAccess.getValues().put(file.getKey(), criterion);
                 successful++;
             }
             catch (Exception e) {
