@@ -2,7 +2,6 @@ package com.acikek.datacriteria.predicate;
 
 import com.google.gson.JsonElement;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Builder<T, P> {

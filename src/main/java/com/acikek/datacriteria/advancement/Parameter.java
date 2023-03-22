@@ -1,6 +1,5 @@
 package com.acikek.datacriteria.advancement;
 
-import com.acikek.datacriteria.api.DataCriteriaAPI;
 import com.acikek.datacriteria.predicate.JsonPredicate;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.acikek.datacriteria.predicate.JsonPredicates;

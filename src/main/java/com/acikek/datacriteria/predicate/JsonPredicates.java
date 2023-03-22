@@ -16,6 +16,7 @@ import net.minecraft.predicate.entity.*;
 import net.minecraft.predicate.item.EnchantmentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class JsonPredicates {
 
     public static final Registry<JsonPredicateContainer<?, ?>> REGISTRY =
             (Registry<JsonPredicateContainer<?, ?>>) (Object)
-            FabricRegistryBuilder.createSimple(JsonPredicateContainer.class, DataCriteria.id("container")).buildAndRegister();
+            FabricRegistryBuilder.createSimple(RegistryKey.ofRegistry(DataCriteria.id("container"))).buildAndRegister();
 
     //#region Basic
 
