@@ -5,9 +5,9 @@ import com.acikek.datacriteria.mixin.CriteriaAccess;
 import com.acikek.datacriteria.predicate.JsonPredicateContainer;
 import com.acikek.datacriteria.predicate.JsonPredicates;
 import com.acikek.datacriteria.predicate.builtin.EnumContainer;
-import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class DataCriteriaAPIImpl {
 

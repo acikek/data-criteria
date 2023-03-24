@@ -15,9 +15,8 @@ import net.minecraft.predicate.*;
 import net.minecraft.predicate.entity.*;
 import net.minecraft.predicate.item.EnchantmentPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class JsonPredicates {
 
     public static final Registry<JsonPredicateContainer<?, ?>> REGISTRY =
             (Registry<JsonPredicateContainer<?, ?>>) (Object)
-            FabricRegistryBuilder.createSimple(RegistryKey.ofRegistry(DataCriteria.id("container"))).buildAndRegister();
+            FabricRegistryBuilder.createSimple(JsonPredicateContainer.class, DataCriteria.id("container")).buildAndRegister();
 
     //#region Basic
 
@@ -109,11 +108,6 @@ public class JsonPredicates {
         return new JsonPredicate<>(predicate, (Class<EntityType<?>>) (Class<?>) EntityType.class, predicate::matches, EntityTypePredicate::toJson);
     });
 
-    public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, TypeSpecificPredicate>> ENTITY_VARIANT = new JsonPredicateContainer<>(element -> {
-        TypeSpecificPredicate predicate = TypeSpecificPredicate.fromJson(element);
-        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.test(parameter.entity(), parameter.world(), parameter.pos()), TypeSpecificPredicate::toJson);
-    });
-
     public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, EntityEffectPredicate>> ENTITY_EFFECTS = new JsonPredicateContainer<>(element -> {
         EntityEffectPredicate predicate = EntityEffectPredicate.fromJson(element);
         return new JsonPredicate<>(predicate, Entity.class, predicate::test, EntityEffectPredicate::toJson);
@@ -129,9 +123,9 @@ public class JsonPredicates {
         return new JsonPredicate<>(predicate, Entity.class, predicate::test, EntityFlagsPredicate::toJson);
     });
 
-    public static final JsonPredicateContainer<DelegateParameters.EntityParameter, JsonPredicate<DelegateParameters.EntityParameter, PlayerPredicate>> PLAYER = new JsonPredicateContainer<>(element -> {
+    public static final JsonPredicateContainer<Entity, JsonPredicate<Entity, PlayerPredicate>> PLAYER = new JsonPredicateContainer<>(element -> {
         PlayerPredicate predicate = PlayerPredicate.fromJson(element.getAsJsonObject());
-        return new JsonPredicate<>(predicate, DelegateParameters.EntityParameter.class, parameter -> predicate.test(parameter.entity(), parameter.world(), parameter.pos()), TypeSpecificPredicate::toJson);
+        return new JsonPredicate<>(predicate, Entity.class, predicate::test, PlayerPredicate::toJson);
     });
 
     public static final JsonPredicateContainer<DelegateParameters.DamageSourceParameter, JsonPredicate<DelegateParameters.DamageSourceParameter, DamageSourcePredicate>> DAMAGE_SOURCE = new JsonPredicateContainer<>(element -> {
@@ -193,7 +187,6 @@ public class JsonPredicates {
         registerMc("entity_check", ENTITY_CHECK);
         registerMc("entity", ENTITY);
         registerMc("entity_type", ENTITY_TYPE);
-        registerMc("entity_variant", ENTITY_VARIANT);
         registerMc("entity_effects", ENTITY_EFFECTS);
         registerMc("entity_equipment", ENTITY_EQUIPMENT);
         registerMc("entity_flags", ENTITY_FLAGS);
