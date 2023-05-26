@@ -9,7 +9,7 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -39,7 +39,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
     }
 
     @Override
-    protected Conditions conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+    protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
         List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> result = containers.stream()
                 .map(parameter -> {
                     if (!obj.has(parameter.name) && !parameter.optional) {
@@ -69,7 +69,7 @@ public class DataCriterion extends AbstractCriterion<DataCriterion.Conditions> {
 
         public List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values;
 
-        public Conditions(EntityPredicate.Extended entity, List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values) {
+        public Conditions(LootContextPredicate entity, List<? extends Pair<? extends Parameter<?, ?>, ? extends JsonPredicate<?, ?>>> values) {
             super(id, entity);
             this.values = values;
         }

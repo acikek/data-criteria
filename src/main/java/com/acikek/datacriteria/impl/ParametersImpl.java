@@ -25,7 +25,7 @@ public class ParametersImpl {
     }
 
     public static DelegateParameters.EntityParameter entity(ServerPlayerEntity player, Entity entity) {
-        return ParametersImpl.entity(player.getWorld(), player.getPos(), entity);
+        return ParametersImpl.entity(player.getServerWorld(), player.getPos(), entity);
     }
 
     public static DelegateParameters.EntityParameter entity(ServerWorld world, Vec3d pos, Entity entity) {
@@ -33,7 +33,7 @@ public class ParametersImpl {
     }
 
     public static DelegateParameters.DamageSourceParameter damageSource(ServerPlayerEntity player, DamageSource source) {
-        return damageSource(player.getWorld(), player.getPos(), source);
+        return damageSource(player.getServerWorld(), player.getPos(), source);
     }
 
     public static DelegateParameters.DamageSourceParameter damageSource(ServerWorld world, Vec3d pos, DamageSource source) {
