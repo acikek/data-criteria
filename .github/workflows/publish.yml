@@ -1,0 +1,66 @@
+name: Publish on GitHub, Modrinth, and CurseForge
+
+on: [ "workflow_dispatch" ]
+
+env:
+  MC_VERSION: 1.20
+  JAVA_VERSION: 17
+  MOD_VERSION: 1.0.0+1.20
+  MOD_VERSION_NAME: 1.0.0
+  MOD_VERSION_NAME_LONG: 1.0.0 Fabric for ${{ env.MC_VERSION }}
+  CF_PROJECT_ID: 759503
+  MR_PROJECT_ID: bbvSY1VI
+  GH_TOKEN: ${{ secrets.PUBLISH_GH_TOKEN }}
+  CF_TOKEN: ${{ secrets.PUBLISH_CF_TOKEN }}
+  MR_TOKEN: ${{ secrets.PUBLISH_MR_TOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Environment Variables
+        run: env
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew clean build
+
+      - name: Publish Mod
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          curseforge-id: ${{ env.CF_PROJECT_ID }}
+          curseforge-token: ${{ env.CF_TOKEN }}
+
+          modrinth-id: ${{ env.MR_PROJECT_ID }}
+          modrinth-token: ${{ env.MR_TOKEN }}
+
+          github-tag: v${{ env.MOD_VERSION }}
+          github-token: ${{ env.GH_TOKEN }}
+
+          modrinth-name: ${{ env.MOD_VERSION_NAME }}
+          curseforge-name: ${{ env.MOD_VERSION_NAME_LONG }}
+          github-name: ${{ env.MOD_VERSION_NAME_LONG }}
+
+          version: ${{ env.MOD_VERSION }}
+          version-type: release
+          loaders: fabric, quilt
+          game-versions: ${{ env.MC_VERSION }}
+          java: ${{ env.JAVA_VERSION }}
+          changelog-file: CHANGELOG.md
