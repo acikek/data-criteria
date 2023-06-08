@@ -21,7 +21,7 @@ public class DataCriteriaTest implements ModInitializer {
                 DataCriteriaAPI.trigger(
                         new Identifier("datacriteria:use_block"), // ID of criterion
                         true, serverPlayer,
-                        Parameters.block(serverPlayer.getWorld(), hitResult.getBlockPos()), // block predicate parameter
+                        Parameters.block(serverPlayer.getServerWorld(), hitResult.getBlockPos()), // block predicate parameter
                         player.getStackInHand(hand) // item predicate parameter
                 );
             }
